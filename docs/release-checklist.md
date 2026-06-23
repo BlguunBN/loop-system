@@ -5,8 +5,11 @@ Use this before publishing the repo publicly.
 ## Code
 
 - [ ] `install.sh` copies all launcher scripts into a bin directory
+- [ ] `install.ps1` copies the Windows launcher wrappers into a Windows bin directory
 - [ ] `bootstrap.sh` installs the project from a raw GitHub URL
+- [ ] `bootstrap.ps1` installs the project from a raw GitHub URL on PowerShell
 - [ ] `loop` prints help correctly
+- [ ] `loop.ps1` and `loop.cmd` launch correctly on Windows
 - [ ] `loop init` works on a clean disposable project
 - [ ] `loop readme` writes a useful README
 - [ ] `loop prompt` prints an agent-agnostic handoff
