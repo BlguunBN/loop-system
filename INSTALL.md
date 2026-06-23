@@ -6,9 +6,29 @@ Loop System is intentionally boring to install:
 - no build step
 - no global daemon
 
-## Quick install
+## Fastest install
 
-From the repo root:
+Use the one-line bootstrap installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s --
+```
+
+To install into a custom directory:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s -- ~/.local/bin
+```
+
+If you want a specific version, pass `--ref`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s -- --ref v0.1.0
+```
+
+## Local clone install
+
+If you already cloned the repository:
 
 ```bash
 git clone https://github.com/BlguunBN/loop-system.git
@@ -59,6 +79,8 @@ On Windows, run the installer from Git Bash or another Bash-compatible shell.
 ## Troubleshooting
 
 - **`loop: command not found`** — your install directory is not on `PATH` yet.
+- **`bootstrap: need curl or wget`** — install one of those tools first.
+- **`bootstrap: need tar`** — install tar or use a Bash environment that includes it.
 - **`Missing required script`** — run `bash install.sh` from the repository root.
 - **Permission errors** — the target directory may need write access; try a directory under your home folder.
 
