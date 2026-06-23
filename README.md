@@ -2,6 +2,33 @@
 
 A small, agent-agnostic loop harness for continuous project work.
 
+## Install
+
+No package manager. No build step. Just Bash.
+
+```bash
+git clone https://github.com/BlguunBN/loop-system.git
+cd loop-system
+bash install.sh
+```
+
+That installs the loop commands into `~/bin` by default.
+If you prefer a different destination, use:
+
+```bash
+bash install.sh ~/.local/bin
+```
+
+After install, make sure the target bin directory is on your `PATH`, then run:
+
+```bash
+loop --help
+```
+
+See [`INSTALL.md`](INSTALL.md) for the full install guide and troubleshooting.
+
+## What it is
+
 It gives you a consistent workflow for:
 
 - bootstrapping a project into the loop
@@ -44,7 +71,9 @@ The agent can be anything, as long as it can:
 | `loop interval <project> <minutes>` | set how often summaries should happen |
 | `loop prune [days]` | remove stale inactive projects |
 
-## Quick start
+## First run
+
+Once installed, try the loop on a disposable project:
 
 ```bash
 loop init /path/to/project "Build the feature"
@@ -52,7 +81,7 @@ loop init /path/to/project "Build the feature"
 
 That will:
 
-1. bootstrap the project
+1. bootstrap the project into the loop
 2. write a fresh-agent README handoff
 3. print the prompt you paste into your agent runtime
 
