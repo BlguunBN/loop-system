@@ -4,19 +4,24 @@ A small, agent-agnostic loop harness for continuous project work.
 
 ## Install
 
-No package manager. No build step. Just Bash.
+The fastest path for strangers is the one-line bootstrap installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s --
+```
+
+To install into a custom directory:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s -- ~/.local/bin
+```
+
+If you prefer a local clone instead:
 
 ```bash
 git clone https://github.com/BlguunBN/loop-system.git
 cd loop-system
 bash install.sh
-```
-
-That installs the loop commands into `~/bin` by default.
-If you prefer a different destination, use:
-
-```bash
-bash install.sh ~/.local/bin
 ```
 
 After install, make sure the target bin directory is on your `PATH`, then run:
@@ -94,6 +99,11 @@ This repo is meant to be easy to publish and easy to reuse:
 - generic prompt language
 - stable command names
 - works across multiple agent runtimes
+
+## Releases
+
+Tags that start with `v` are published automatically by GitHub Actions.
+That gives strangers a versioned entry point instead of a random moving target.
 
 ## Recommended release checklist
 
