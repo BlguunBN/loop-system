@@ -1,0 +1,6 @@
+.loop/
+.hermes-loop/
+LOOP_AGENT_START.md
+__pycache__/
+*.pyc
+.DS_Store
