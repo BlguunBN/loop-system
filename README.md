@@ -4,32 +4,35 @@ A small, agent-agnostic loop harness for continuous project work.
 
 ## Install
 
-The fastest path for strangers is the one-line bootstrap installer.
+### Windows, native PowerShell
 
-**macOS/Linux/Bash:**
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s --
-```
-
-**Windows / PowerShell:**
+No Bash required.
 
 ```powershell
 irm https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.ps1 | iex
 ```
 
-To install into a custom directory on Windows, download the script first and run it locally:
+Or, if you've already cloned the repo:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1 -TargetDir "$HOME\bin"
+.\install.ps1
 ```
 
-If you prefer a local clone instead:
+That gives you `loop.cmd` and `loop.ps1` in the target bin directory.
+
+### macOS / Linux
 
 ```bash
 git clone https://github.com/BlguunBN/loop-system.git
 cd loop-system
 bash install.sh
+```
+
+That installs the loop commands into `~/bin` by default.
+If you prefer a different destination, use:
+
+```bash
+bash install.sh ~/.local/bin
 ```
 
 After install, make sure the target bin directory is on your `PATH`, then run:
@@ -88,8 +91,8 @@ The agent can be anything, as long as it can:
 
 Once installed, try the loop on a disposable project:
 
-```bash
-loop init /path/to/project "Build the feature"
+```powershell
+loop init C:\path\to\project "Build the feature"
 ```
 
 That will:

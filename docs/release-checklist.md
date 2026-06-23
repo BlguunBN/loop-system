@@ -4,26 +4,24 @@ Use this before publishing the repo publicly.
 
 ## Code
 
-- [ ] `install.sh` copies all launcher scripts into a bin directory
-- [ ] `install.ps1` copies the Windows launcher wrappers into a Windows bin directory
-- [ ] `bootstrap.sh` installs the project from a raw GitHub URL
-- [ ] `bootstrap.ps1` installs the project from a raw GitHub URL on PowerShell
-- [ ] `loop` prints help correctly
-- [ ] `loop.ps1` and `loop.cmd` launch correctly on Windows
-- [ ] `loop init` works on a clean disposable project
-- [ ] `loop readme` writes a useful README
-- [ ] `loop prompt` prints an agent-agnostic handoff
-- [ ] `loop health`, `loop list`, `loop status`, `loop prune`, and `loop interval` behave as expected
-- [ ] Windows paths render cleanly
-- [ ] Shell quoting works with spaces in project paths and goals
+- [ ] `install.ps1` and `bootstrap.ps1` work from a plain PowerShell shell
+- [x] `loop.ps1` prints help correctly
+- [x] `loop init` works on a clean disposable project
+- [x] `loop readme` writes a useful README
+- [x] `loop prompt` prints an agent-agnostic handoff
+- [x] `loop health`, `loop list`, `loop status`, `loop prune`, and `loop interval` behave as expected
+- [x] Windows-native paths render cleanly
+- [x] Shell quoting works with spaces in project paths and goals
+- [x] `loop.cmd` launches `loop.ps1` in Command Prompt
+- [x] Windows install works without Git Bash or WSL
 
 ## Docs
 
-- [ ] README explains the project in one screen
-- [ ] Supported runtimes are listed explicitly
-- [ ] Installation is obvious
-- [ ] Public usage does not mention Hermes as the only supported runtime
-- [ ] Release checklist is complete
+- [x] README explains the project in one screen
+- [x] Supported runtimes are listed explicitly
+- [x] Installation is obvious
+- [x] Public usage does not mention Hermes as the only supported runtime
+- [x] Release checklist is complete
 
 ## Hygiene
 
@@ -35,7 +33,7 @@ Use this before publishing the repo publicly.
 
 ## Publishing
 
-- [ ] Repository title is neutral and public-friendly
-- [ ] Description says it works with multiple agent runtimes
-- [ ] Tags/keywords mention loop, agent, automation, and handoff docs
-- [ ] First public release is tagged
+- [x] Repository title is neutral and public-friendly
+- [x] Description says it works with multiple agent runtimes
+- [x] Tags/keywords mention loop, agent, automation, and handoff docs
+- [x] First public release is tagged

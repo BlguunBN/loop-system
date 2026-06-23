@@ -1,17 +1,24 @@
 # Scripts folder
 
-This folder contains the runtime-neutral loop wrappers that the public installer copies into your bin directory.
+This folder contains the public loop entry points.
 
-The root `install.sh` script is the easiest way to install them on Bash systems.
-The root `install.ps1` script is the Windows-native installer.
+## Windows native
 
-Files here are the public entry points:
+The Windows path is PowerShell-first and does not require Bash or WSL:
+
+- `loop.ps1` — native CLI and project loop controller
+- `loop.cmd` — Command Prompt wrapper that launches `loop.ps1`
+
+## Cross-platform Bash
+
+The Bash scripts remain for macOS / Linux users and for compatibility with the original install path:
 
 - `loop`
-- `loop.ps1`
-- `loop.cmd`
 - `loop.sh`
 - `loop-agent-setup.sh`
 - `loop-universal-install.sh`
 - `loop-readme-install.sh`
 - `loop-control.sh`
+
+The root `install.sh` script installs the Bash entry points.
+The root `install.ps1` script installs the Windows-native entry points.

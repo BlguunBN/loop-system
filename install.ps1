@@ -13,12 +13,7 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $sourceDir = Join-Path $root 'scripts'
 $files = @(
   'loop.ps1',
-  'loop.cmd',
-  'loop.sh',
-  'loop-agent-setup.sh',
-  'loop-universal-install.sh',
-  'loop-readme-install.sh',
-  'loop-control.sh'
+  'loop.cmd'
 )
 
 New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
