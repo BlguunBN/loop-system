@@ -23,7 +23,7 @@ fi
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 target_dir="${1:-$HOME/bin}"
 
-if [[ "$target_dir" == '~/'* ]]; then
+if [[ "$target_dir" == ~/* ]]; then
   target_dir="$HOME/${target_dir#~/}"
 fi
 
@@ -31,6 +31,8 @@ mkdir -p "$target_dir"
 
 files=(
   "loop"
+  "loop.ps1"
+  "loop.cmd"
   "loop.sh"
   "loop-agent-setup.sh"
   "loop-universal-install.sh"
