@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SETUP_SCRIPT="/c/Users/bilgu/bin/hermes-loop-agent-setup.sh"
+UNIVERSAL_INSTALL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-universal-install.sh"
+README_INSTALL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-readme-install.sh"
+AGENT_ARGS=()
+
+usage() {
+  cat <<'EOF'
+Usage:
+  loop [--agent NAME] <project_dir> [goal...]          # bootstrap a project into the loop
+  loop [--agent NAME] install <project_dir> [goal...]  # alias for bootstrap
+  loop [--agent NAME] prompt <project_dir> [goal...]   # print the handoff prompt only
+  loop [--agent NAME] readme <project_dir> [goal...]   # write the project README handoff
+  loop [--agent NAME] init <project_dir> [goal...]     # bootstrap, write README, and print the prompt
+  loop [--agent NAME] {new|start|resume|focus|tick|health|status} <project_dir> [goal...]
+  loop list
+  loop prune [days]
+  loop interval <project_dir> <minutes>
+EOF
+}
+
+abs_path() {
+  local path="$1"
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -m "$path"
+  elif [[ -d "$path" ]]; then
+    (cd "$path" && pwd)
+  else
+    echo "$path"
+  fi
+}
+
+require_script() {
+  local script="$1"
+  if [[ ! -x "$script" ]]; then
+    echo "Missing required script: $script" >&2
+    exit 1
+  fi
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --agent|--runtime)
+      AGENT_ARGS+=("$1" "${2:-agent}")
+      shift 2
+      ;;
+    --agent=*|--runtime=*)
+      AGENT_ARGS+=("$1")
+      shift
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+if [[ $# -lt 1 ]]; then
+  usage
+  exit 1
+fi
+
+cmd="$1"
+shift || true
+
+case "$cmd" in
+  help|-h|--help)
+    usage
+    exit 0
+    ;;
+  install|bootstrap|setup)
+    require_script "$UNIVERSAL_INSTALL_SCRIPT"
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    shift || true
+    goal=("$@")
+    exec "$UNIVERSAL_INSTALL_SCRIPT" "${AGENT_ARGS[@]}" "$project_dir" "${goal[@]}"
+    ;;
+  prompt)
+    require_script "$SETUP_SCRIPT"
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    shift || true
+    goal=("$@")
+    exec "$SETUP_SCRIPT" "${AGENT_ARGS[@]}" prompt "$project_dir" "${goal[@]}"
+    ;;
+  readme)
+    require_script "$README_INSTALL_SCRIPT"
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    shift || true
+    goal=("$@")
+    exec "$README_INSTALL_SCRIPT" "${AGENT_ARGS[@]}" "$project_dir" "${goal[@]}"
+    ;;
+  init)
+    require_script "$SETUP_SCRIPT"
+    require_script "$README_INSTALL_SCRIPT"
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    shift || true
+    goal=("$@")
+    bootstrap_output="$($SETUP_SCRIPT "${AGENT_ARGS[@]}" bootstrap "$project_dir" "${goal[@]}")"
+    readme_output="$($README_INSTALL_SCRIPT "${AGENT_ARGS[@]}" "$project_dir" "${goal[@]}")"
+    prompt_output="$($SETUP_SCRIPT "${AGENT_ARGS[@]}" prompt "$project_dir" "${goal[@]}")"
+    printf '%s\n' "$bootstrap_output"
+    printf '%s\n' "$readme_output"
+    printf '%s\n' "$prompt_output"
+    ;;
+  list|prune)
+    require_script "$SETUP_SCRIPT"
+    exec "$SETUP_SCRIPT" "$cmd" "$@"
+    ;;
+  new|start|resume|focus|tick|health|status)
+    require_script "$SETUP_SCRIPT"
+    if [[ $# -lt 1 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    shift || true
+    goal=("$@")
+    exec "$SETUP_SCRIPT" "${AGENT_ARGS[@]}" "$cmd" "$project_dir" "${goal[@]}"
+    ;;
+  interval)
+    require_script "$SETUP_SCRIPT"
+    if [[ $# -lt 2 ]]; then
+      usage
+      exit 1
+    fi
+    project_dir="$(abs_path "$1")"
+    minutes="$2"
+    exec "$SETUP_SCRIPT" "${AGENT_ARGS[@]}" interval "$project_dir" "$minutes"
+    ;;
+  *)
+    require_script "$UNIVERSAL_INSTALL_SCRIPT"
+    project_dir="$(abs_path "$cmd")"
+    goal=("$@")
+    exec "$UNIVERSAL_INSTALL_SCRIPT" "${AGENT_ARGS[@]}" "$project_dir" "${goal[@]}"
+    ;;
+esac
