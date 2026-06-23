@@ -4,16 +4,24 @@ A small, agent-agnostic loop harness for continuous project work.
 
 ## Install
 
-The fastest path for strangers is the one-line bootstrap installer:
+The fastest path for strangers is the one-line bootstrap installer.
+
+**macOS/Linux/Bash:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s --
 ```
 
-To install into a custom directory:
+**Windows / PowerShell:**
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.sh | bash -s -- ~/.local/bin
+```powershell
+irm https://raw.githubusercontent.com/BlguunBN/loop-system/main/bootstrap.ps1 | iex
+```
+
+To install into a custom directory on Windows, download the script first and run it locally:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1 -TargetDir "$HOME\bin"
 ```
 
 If you prefer a local clone instead:
