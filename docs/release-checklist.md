@@ -4,6 +4,8 @@ Use this before publishing the repo publicly.
 
 ## Code
 
+- [ ] `install.sh` copies all launcher scripts into a bin directory
+- [ ] `bootstrap.sh` installs the project from a raw GitHub URL
 - [ ] `loop` prints help correctly
 - [ ] `loop init` works on a clean disposable project
 - [ ] `loop readme` writes a useful README
