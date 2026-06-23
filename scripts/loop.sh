@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SETUP_SCRIPT="/c/Users/bilgu/bin/hermes-loop-agent-setup.sh"
-UNIVERSAL_INSTALL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-universal-install.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SETUP_SCRIPT="$SCRIPT_DIR/loop-agent-setup.sh"
+UNIVERSAL_INSTALL_SCRIPT="$SCRIPT_DIR/loop-universal-install.sh"
 
 usage() {
   cat <<'EOF'

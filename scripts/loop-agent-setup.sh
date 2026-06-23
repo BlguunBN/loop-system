@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CONTROL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-control.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONTROL_SCRIPT="$SCRIPT_DIR/loop-control.sh"
 AGENT_NAME="agent"
 
 usage() {

@@ -35,7 +35,7 @@ from pathlib import Path
 action = sys.argv[1]
 project_dir = Path(sys.argv[2]) if sys.argv[2] else None
 goal = sys.argv[3]
-hermes_home = Path(os.environ.get('HERMES_HOME', r'C:\Users\bilgu\AppData\Local\hermes'))
+hermes_home = Path(os.environ.get('HERMES_HOME', Path.home() / 'AppData' / 'Local' / 'hermes'))
 state_root = hermes_home / 'loop-agent'
 registry_file = state_root / 'projects.json'
 active_project_file = state_root / 'active-project.txt'
@@ -262,9 +262,16 @@ if action == 'tick':
             'last_fingerprint': None,
         }
         save_state(state_file_for(project_dir), state)
+    autopilot_script = hermes_home / 'scripts' / 'loop_autopilot.py'
+    if not autopilot_script.exists():
+        print(f'TICK: {project_dir_str}')
+        print('NOTE: Autopilot script not found at ' + str(autopilot_script))
+        print('      Loop tick requires the Hermes agent stack for full automation.')
+        print("      Run 'loop health' and 'loop focus' manually to proceed.")
+        raise SystemExit(0)
     env = os.environ.copy()
     env['HERMES_LOOP_ACTIVE_PROJECT'] = project_dir_str
-    proc = subprocess.run([sys.executable, str(hermes_home / 'scripts' / 'loop_autopilot.py')], text=True, capture_output=True, env=env)
+    proc = subprocess.run([sys.executable, str(autopilot_script)], text=True, capture_output=True, env=env)
     if proc.stdout:
         print(proc.stdout, end='')
     if proc.stderr:

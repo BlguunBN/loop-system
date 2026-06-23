@@ -3,7 +3,7 @@ set -euo pipefail
 
 README_NAME="README.md"
 DEFAULT_GOAL='Continue improving this project safely and incrementally.'
-LOOP_SCRIPT='/c/Users/bilgu/bin/loop'
+LOOP_SCRIPT='loop'
 AGENT_NAME='agent'
 
 usage() {

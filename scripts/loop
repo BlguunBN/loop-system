@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SETUP_SCRIPT="/c/Users/bilgu/bin/hermes-loop-agent-setup.sh"
-UNIVERSAL_INSTALL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-universal-install.sh"
-README_INSTALL_SCRIPT="/c/Users/bilgu/bin/hermes-loop-readme-install.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SETUP_SCRIPT="$SCRIPT_DIR/loop-agent-setup.sh"
+UNIVERSAL_INSTALL_SCRIPT="$SCRIPT_DIR/loop-universal-install.sh"
+README_INSTALL_SCRIPT="$SCRIPT_DIR/loop-readme-install.sh"
 AGENT_ARGS=()
 
 usage() {

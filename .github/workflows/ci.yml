@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: [v*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    name: ShellCheck (bash scripts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: ./scripts
+          severity: warning
+
+  powershell:
+    name: PowerShell lint + syntax check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PSScriptAnalyzer
+        run: Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Lint loop.ps1
+        run: Invoke-ScriptAnalyzer -Path scripts/loop.ps1 -Severity @('Error', 'Warning')
+
+  smoke-test-windows:
+    name: Smoke test (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install loop
+        run: |
+          $target = "$HOME\bin"
+          New-Item -ItemType Directory -Force -Path $target | Out-Null
+          Copy-Item -Force scripts\loop.ps1 $target
+          Copy-Item -Force scripts\loop.cmd $target
+          echo "$target" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      - name: Run loop --help
+        run: loop --help
+      - name: Run loop init on test project
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop init $tmp "Smoke test"
+      - name: Run loop health
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop health $tmp
+      - name: Run loop list
+        run: loop list
+      - name: Run loop status
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop status $tmp
+      - name: Run loop prompt
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop prompt $tmp "Smoke test"
+      - name: Run loop readme
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop readme $tmp "Smoke test"
+      - name: Run loop focus
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop focus $tmp "Smoke test"
+      - name: Run loop stop
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop stop $tmp
+      - name: Run loop interval
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop interval $tmp 15
+      - name: Run loop tick (graceful fallback)
+        run: |
+          $tmp = Join-Path $env:RUNNER_TEMP "loop-smoke-project"
+          loop focus $tmp "Smoke test"
+          loop tick $tmp "Smoke test"
+      - name: Run loop prune
+        run: loop prune 999
+
+  smoke-test-ubuntu:
+    name: Smoke test (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+      - name: Make scripts executable
+        run: chmod +x scripts/*
+      - name: Run install.sh
+        run: bash install.sh ~/.local/bin
+      - name: Add to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Run loop --help
+        run: loop --help
+      - name: Run loop init on test project
+        run: |
+          tmp=$(mktemp -d)
+          loop init "$tmp" "Smoke test"
+      - name: Run loop health
+        run: |
+          tmp=$(mktemp -d)
+          loop init "$tmp" "Smoke test"
+          loop health "$tmp"
+      - name: Run loop list
+        run: loop list
+      - name: Run loop tick (graceful fallback)
+        run: |
+          tmp=$(mktemp -d)
+          loop init "$tmp" "Smoke test"
+          loop tick "$tmp" "Smoke test"

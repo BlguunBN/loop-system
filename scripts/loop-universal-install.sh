@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SETUP_SCRIPT="/c/Users/bilgu/bin/hermes-loop-agent-setup.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SETUP_SCRIPT="$SCRIPT_DIR/loop-agent-setup.sh"
 DOC_NAME="LOOP_AGENT_START.md"
 DEFAULT_GOAL='Continue improving this project safely and incrementally.'
 AGENT_NAME="agent"

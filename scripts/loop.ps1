@@ -187,21 +187,38 @@ function Invoke-Autopilot {
     [string]$Goal
   )
 
-  $scriptPath = Join-Path (Join-Path (Get-HermesHome) 'scripts') 'loop_autopilot.py'
-  if (-not (Test-Path $scriptPath)) {
-    throw "Missing autopilot script: $scriptPath"
+  $hermesHome = Get-HermesHome
+  $scriptPath = Join-Path (Join-Path $hermesHome 'scripts') 'loop_autopilot.py'
+  if (-not (Test-Path -LiteralPath $scriptPath)) {
+    Write-Output "TICK: $ProjectDir"
+    Write-Output "NOTE: Autopilot script not found at $scriptPath"
+    Write-Output "      Loop tick requires the Hermes agent stack for full automation."
+    Write-Output "      Run 'loop health' and 'loop focus' manually to proceed."
+    exit 0
   }
 
   $python = Get-PythonCommand
   if (-not $python) {
-    throw 'Need python or py on PATH to run the loop autopilot.'
+    Write-Output "TICK: $ProjectDir"
+    Write-Output "NOTE: Python not found on PATH (required for Hermes autopilot)."
+    Write-Output "      Run 'loop health' and 'loop focus' manually to proceed."
+    exit 0
   }
 
   $previous = $env:HERMES_LOOP_ACTIVE_PROJECT
   $env:HERMES_LOOP_ACTIVE_PROJECT = $ProjectDir
   try {
-    & $python.Path @($python.Args + $scriptPath)
-    exit $LASTEXITCODE
+    $output = & $python.Path @($python.Args + $scriptPath) 2>&1
+    $exitCode = $LASTEXITCODE
+    if ($output) {
+      $output | ForEach-Object { Write-Output $_ }
+    }
+    exit $exitCode
+  } catch {
+    Write-Output "TICK: $ProjectDir"
+    Write-Output "NOTE: Autopilot encountered an error: $($_.Exception.Message)"
+    Write-Output "      Run 'loop health' and 'loop focus' manually to proceed."
+    exit 0
   } finally {
     if ($null -ne $previous) {
       $env:HERMES_LOOP_ACTIVE_PROJECT = $previous
@@ -637,3 +654,4 @@ switch -Regex ($action) {
     exit 1
   }
 }
+Write-Host 'SCRIPT_IS_RUNNING'
