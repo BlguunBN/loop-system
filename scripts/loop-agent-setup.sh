@@ -42,6 +42,7 @@ Compatible runtimes: Hermes, Claude Code, Codex, OpenCode, Cursor, or any other 
 
 Project root: $project_dir
 Goal: $goal
+Runtime: $AGENT_NAME
 
 Rules:
 - Use the loop control workflow, not chat-only planning.
