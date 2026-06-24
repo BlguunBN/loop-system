@@ -98,13 +98,13 @@ Runtime: ${AGENT_NAME}
 1. Read this file.
 2. Run:
 
-   \\`loop health "$project_dir"\\`
+   \`loop health "$project_dir"\`
 3. Then run:
 
-   \\`loop focus "$project_dir" "$goal"\\`
+   \`loop focus "$project_dir" "$goal"\`
 4. Then run:
 
-   \\`loop tick "$project_dir" "$goal"\\`
+   \`loop tick "$project_dir" "$goal"\`
 
 ## Prompt for a new agent
 
@@ -113,10 +113,10 @@ EOF
   cat <<EOF
 ## Loop control shortcuts
 
-- \\`loop list\\`
-- \\`loop status "$project_dir"\\`
-- \\`loop interval "$project_dir" 30\\`
-- \\`loop prune 30\\`
+- \`loop list\`
+- \`loop status "$project_dir"\`
+- \`loop interval "$project_dir" 30\`
+- \`loop prune 30\`
 EOF
 } > "$project_dir/$DOC_NAME"
 

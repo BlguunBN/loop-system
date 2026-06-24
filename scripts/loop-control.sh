@@ -115,12 +115,6 @@ def health_report(project_dir: Path) -> dict:
     state = load_state(state_file)
     if not project_dir.exists():
         issues.append('project_dir_missing')
-    if not (project_dir / '.git').exists():
-        issues.append('not_a_git_repo')
-    try:
-        subprocess.run(['git', '-C', str(project_dir), 'rev-parse', '--is-inside-work-tree'], capture_output=True, text=True, check=True)
-    except Exception:
-        issues.append('git_unavailable_or_not_repo')
     if not state:
         issues.append('state_missing')
     elif not state.get('active', False):
