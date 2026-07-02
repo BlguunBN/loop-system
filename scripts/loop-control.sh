@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
-  echo 'Usage: hermes-loop-control.sh {new|start|stop|resume|focus|interval|health|tick|status|list|prune} PROJECT_DIR [goal text...]' >&2
+  echo 'Usage: hermes-loop-control.sh {new|start|stop|resume|focus|interval|health|verify|tick|status|list|prune} PROJECT_DIR [goal text...]' >&2
   exit 1
 fi
 
@@ -235,6 +235,47 @@ if action == 'health':
         raise SystemExit(1)
     print(json.dumps(health_report(project_dir), indent=2))
     raise SystemExit(0)
+
+if action == 'verify':
+    if not project_dir:
+        print('Missing PROJECT_DIR', file=sys.stderr)
+        raise SystemExit(1)
+    report = {
+        'project_dir': str(project_dir),
+        'health': health_report(project_dir),
+        'git_repo': False,
+        'git_status': [],
+        'git_diff_stat': [],
+        'git_diff_check_ok': None,
+        'ok': False,
+        'notes': [],
+    }
+    git = shutil.which('git')
+    if not git:
+        report['notes'].append('git_not_found')
+        print(json.dumps(report, indent=2))
+        raise SystemExit(1)
+    inside = subprocess.run([git, '-C', str(project_dir), 'rev-parse', '--is-inside-work-tree'], text=True, capture_output=True)
+    if inside.returncode != 0:
+        report['notes'].append('not_a_git_repo')
+        if inside.stderr.strip():
+            report['notes'].append(inside.stderr.strip())
+        print(json.dumps(report, indent=2))
+        raise SystemExit(1)
+    report['git_repo'] = True
+    status = subprocess.run([git, '-C', str(project_dir), 'status', '--short'], text=True, capture_output=True)
+    report['git_status'] = [line for line in status.stdout.splitlines() if line.strip()]
+    diff_stat = subprocess.run([git, '-C', str(project_dir), 'diff', '--stat'], text=True, capture_output=True)
+    report['git_diff_stat'] = [line for line in diff_stat.stdout.splitlines() if line.strip()]
+    diff_check = subprocess.run([git, '-C', str(project_dir), 'diff', '--check'], text=True, capture_output=True)
+    report['git_diff_check_ok'] = diff_check.returncode == 0
+    if diff_check.stdout.strip():
+        report['notes'].append(diff_check.stdout.strip())
+    if diff_check.stderr.strip():
+        report['notes'].append(diff_check.stderr.strip())
+    report['ok'] = bool(report['health'].get('ok')) and bool(report['git_repo']) and bool(report['git_diff_check_ok'])
+    print(json.dumps(report, indent=2))
+    raise SystemExit(0 if report['ok'] else 1)
 
 if action == 'tick':
     if not project_dir:

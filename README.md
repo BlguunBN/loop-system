@@ -73,6 +73,17 @@ Supported examples:
 The loop is not the agent.
 It is the control plane around the agent.
 
+## Loop engineering stack
+
+The article behind this repo’s upgrade path treats agent systems as stacked loops, not a single forever-retrying prompt.
+
+- **Agent loop** — `loop tick` makes one deliberate pass.
+- **Verification loop** — `loop health` and `loop verify` check whether the pass was actually good.
+- **Event loop** — `loop interval`, `focus`, `start`, and `resume` keep the work scheduled and resumable.
+- **Hill-climbing loop** — the docs and state files should get better when a repeated failure shows up, not just get retried harder.
+
+The practical rule: *if a tick changes code, verify before you tick again.*
+
 ## Commands
 
 | Command | What it does |
@@ -81,6 +92,7 @@ It is the control plane around the agent.
 | `loop readme <project> [goal...]` | write only the project README handoff |
 | `loop prompt <project> [goal...]` | print only the agent prompt |
 | `loop health <project>` | check whether the project looks healthy |
+| `loop verify <project>` | run health plus git-state verification |
 | `loop focus <project> [goal...]` | set the active project |
 | `loop tick <project> [goal...]` | run one iteration of the loop |
 | `loop list` | list tracked projects |
@@ -122,3 +134,4 @@ That gives strangers a versioned entry point instead of a moving target.
 - [`INSTALL.md`](INSTALL.md) — install and troubleshooting
 - [`docs/agent-compatibility.md`](docs/agent-compatibility.md) — which agents and shells are supported
 - [`docs/release-checklist.md`](docs/release-checklist.md) — release hygiene and verification
+- [`docs/loop-engineering.md`](docs/loop-engineering.md) — the loop-stack model from the article

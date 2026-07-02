@@ -19,7 +19,7 @@ Usage:
   loop [--agent NAME] prompt <project_dir> [goal...]    # print the agent prompt
   loop [--agent NAME] readme <project_dir> [goal...]    # write README.md for the project
   loop [--agent NAME] init <project_dir> [goal...]      # create state, README, and prompt
-  loop [--agent NAME] {new|start|resume|focus|tick|health|status|stop} <project_dir> [goal...]
+  loop [--agent NAME] {new|start|resume|focus|tick|health|verify|status|stop} <project_dir> [goal...]
   loop list
   loop prune [days]
   loop interval <project_dir> <minutes>
@@ -228,6 +228,45 @@ function Invoke-Autopilot {
   }
 }
 
+function Invoke-Verification {
+  param([Parameter(Mandatory = $true)][string]$ProjectDir)
+
+  $health = Get-HealthReport -ProjectDir $ProjectDir
+  $report = [ordered]@{
+    project_dir = $ProjectDir
+    health = $health
+    git_repo = $false
+    git_status = @()
+    git_diff_stat = @()
+    git_diff_check_ok = $null
+    ok = $false
+    notes = @()
+  }
+
+  $git = Get-Command git -ErrorAction SilentlyContinue
+  if (-not $git) {
+    $report.notes += 'git_not_found'
+    return $report
+  }
+
+  & git -C $ProjectDir rev-parse --is-inside-work-tree *> $null
+  if ($LASTEXITCODE -ne 0) {
+    $report.notes += 'not_a_git_repo'
+    return $report
+  }
+
+  $report.git_repo = $true
+  $status = & git -C $ProjectDir status --short 2>&1
+  if ($status) { $report.git_status = @($status) }
+  $diffStat = & git -C $ProjectDir diff --stat 2>&1
+  if ($diffStat) { $report.git_diff_stat = @($diffStat) }
+  $diffCheck = & git -C $ProjectDir diff --check 2>&1
+  $report.git_diff_check_ok = ($LASTEXITCODE -eq 0)
+  if ($diffCheck) { $report.notes += @($diffCheck) }
+  $report.ok = [bool]$report.health.ok -and [bool]$report.git_repo -and [bool]$report.git_diff_check_ok
+  return $report
+}
+
 function Get-PromptText {
   param(
     [Parameter(Mandatory = $true)][string]$ProjectDir,
@@ -249,6 +288,7 @@ Rules:
 - First run health.
 - If the project is ready, focus or resume it.
 - Then run one safe tick.
+- If the tick changed code or docs, run `loop verify` before the next tick.
 - Keep iterating on the next safe step.
 - Keep replies short and status-oriented.
 - If blocked, report the exact blocker and missing prerequisite.
@@ -258,7 +298,8 @@ Suggested command sequence:
 1. loop health "$ProjectDir"
 2. loop focus "$ProjectDir" "$Goal"
 3. loop tick "$ProjectDir" "$Goal"
-4. loop list
+4. loop verify "$ProjectDir"
+5. loop list
 "@
 }
 
@@ -539,6 +580,20 @@ switch -Regex ($action) {
     $projectDir = Normalize-ProjectPath $actionArgs[0]
     Get-HealthReport -ProjectDir $projectDir | ConvertTo-Json -Depth 10 | Write-Output
     exit 0
+  }
+
+  '^verify$' {
+    if ($actionArgs.Count -lt 1) {
+      Show-Usage
+      exit 1
+    }
+    $projectDir = Normalize-ProjectPath $actionArgs[0]
+    $report = Invoke-Verification -ProjectDir $projectDir
+    $report | ConvertTo-Json -Depth 10 | Write-Output
+    if ($report.ok) {
+      exit 0
+    }
+    exit 1
   }
 
   '^status$' {
