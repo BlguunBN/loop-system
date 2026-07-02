@@ -11,7 +11,7 @@ Usage:
   loop <project_dir> [goal...]                     # bootstrap a project into the loop
   loop install <project_dir> [goal...]             # alias for bootstrap
   loop prompt <project_dir> [goal...]              # print the handoff prompt only
-  loop {new|start|resume|focus|tick|health|status} <project_dir> [goal...]
+  loop {new|start|resume|focus|tick|health|verify|status} <project_dir> [goal...]
   loop list
   loop prune [days]
   loop interval <project_dir> <minutes>
@@ -76,7 +76,7 @@ case "$cmd" in
     require_script "$SETUP_SCRIPT"
     exec "$SETUP_SCRIPT" "$cmd" "$@"
     ;;
-  new|start|resume|focus|tick|health|status)
+  new|start|resume|focus|tick|health|verify|status)
     require_script "$SETUP_SCRIPT"
     if [[ $# -lt 1 ]]; then
       usage
